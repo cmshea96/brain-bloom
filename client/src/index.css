@@ -1,0 +1,162 @@
+@import url('https://api.fontshare.com/v2/css?f[]=chillax@400,500,600,700&f[]=satoshi@400,500,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── BRAIN BLOOM — ADHD Color System ───────────────────────────────────────
+   Warm dark base (not harsh black) + vivid accent palette.
+   High contrast, stimulating but not chaotic.
+   Each energy mode shifts the accent slightly.
+────────────────────────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    /* Deep warm dark — easier on ADHD eyes than pure black */
+    --background:    24 12% 7%;
+    --foreground:    40 20% 93%;
+
+    --card:          24 11% 10%;
+    --card-foreground: 40 20% 93%;
+
+    --popover:       24 11% 10%;
+    --popover-foreground: 40 20% 93%;
+
+    /* Vivid violet — primary dopamine hit */
+    --primary:       270 85% 68%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Electric teal — secondary spark */
+    --secondary:     24 10% 15%;
+    --secondary-foreground: 40 15% 75%;
+
+    --muted:         24 10% 13%;
+    --muted-foreground: 40 8% 52%;
+
+    /* Coral / warm orange — action & energy */
+    --accent:        20 95% 62%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive:   0 72% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border:        24 10% 18%;
+    --input:         24 10% 18%;
+    --ring:          270 85% 68%;
+    --radius:        1rem;
+
+    /* Branch type colors */
+    --branch-subtask:  270 85% 68%;   /* violet */
+    --branch-resource: 185 90% 48%;   /* teal */
+    --branch-worry:    0 78% 62%;     /* red */
+    --branch-waiting:  45 95% 55%;    /* amber */
+    --branch-idea:     142 68% 50%;   /* green */
+    --branch-note:     215 65% 62%;   /* blue */
+
+    /* Energy mode glows */
+    --energy-fried:   215 65% 62%;    /* cool blue — calm */
+    --energy-okay:    270 85% 68%;    /* violet — balanced */
+    --energy-wired:   20 95% 62%;     /* coral/orange — high */
+  }
+}
+
+@layer base {
+  * { @apply border-border; box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Satoshi', 'Inter', sans-serif;
+    min-height: 100dvh;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Chillax', 'Satoshi', sans-serif;
+    text-wrap: balance;
+    line-height: 1.2;
+  }
+
+  button { cursor: pointer; }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 999px; }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+}
+
+/* ── Bloom-specific animations ──────────────────────────────────────────── */
+@keyframes bloom-in {
+  from { opacity: 0; transform: scale(0.92) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.bloom-in { animation: bloom-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-4px); }
+}
+.float { animation: float 3s ease-in-out infinite; }
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(270 85% 68% / 0.3); }
+  50%       { box-shadow: 0 0 0 12px hsl(270 85% 68% / 0); }
+}
+.pulse-glow { animation: pulse-glow 2.5s ease infinite; }
+
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position: 200% center; }
+}
+
+/* ── Bloom card hover ───────────────────────────────────────────────────── */
+.bloom-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease;
+}
+.bloom-card:hover {
+  transform: translateY(-3px) scale(1.01);
+}
+
+/* ── Branch pill hover ──────────────────────────────────────────────────── */
+.branch-pill {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.branch-pill:hover {
+  transform: translateY(-2px);
+}
+
+/* ── Now card glow ──────────────────────────────────────────────────────── */
+.now-card-fried  { box-shadow: 0 0 40px hsl(215 65% 62% / 0.2), 0 0 80px hsl(215 65% 62% / 0.08); }
+.now-card-okay   { box-shadow: 0 0 40px hsl(270 85% 68% / 0.2), 0 0 80px hsl(270 85% 68% / 0.08); }
+.now-card-wired  { box-shadow: 0 0 40px hsl(20 95% 62% / 0.2), 0 0 80px hsl(20 95% 62% / 0.08); }
+
+/* ── Gradient text ──────────────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, hsl(270 85% 72%), hsl(185 90% 55%), hsl(20 95% 65%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Energy badge ───────────────────────────────────────────────────────── */
+.energy-fried { background: hsl(215 65% 62% / 0.15); color: hsl(215 65% 72%); border: 1px solid hsl(215 65% 62% / 0.3); }
+.energy-okay  { background: hsl(270 85% 68% / 0.15); color: hsl(270 85% 78%); border: 1px solid hsl(270 85% 68% / 0.3); }
+.energy-wired { background: hsl(20 95% 62% / 0.15); color: hsl(20 95% 72%); border: 1px solid hsl(20 95% 62% / 0.3); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
