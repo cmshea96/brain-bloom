@@ -243,4 +243,71 @@ export default function BloomPage() {
   const del = useMutation({
     mutationFn: (id: number) => deleteBloom(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["blooms"] }),
-    onEr
+    onError: (err: Error) => {
+      toast({ title: "Couldn't delete bloom", description: err.message, variant: "destructive" });
+    },
+  });
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Chillax, sans-serif' }}>
+            Your <span className="gradient-text">Blooms</span>
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {isLoading ? "Loading your thoughts…" :
+             isError ? "Couldn't connect to Supabase" :
+             blooms.length === 0 ? "Nothing here yet. What's on your mind?" :
+             `${blooms.length} thought${blooms.length > 1 ? "s" : ""} captured — tap one to branch it out.`}
+          </p>
+        </div>
+        <Button data-testid="btn-add-bloom" onClick={() => setAddOpen(true)}
+          className="gap-2 font-semibold rounded-xl"
+          style={{ background: "hsl(270 85% 68%)", color: "#fff", boxShadow: "0 0 20px hsl(270 85% 68% / 0.35)" }}>
+          <Plus size={16} /> Bloom
+        </Button>
+      </div>
+
+      {isError && <ErrorBanner endpoint="supabase/blooms" onRetry={() => refetch()} />}
+
+      {isLoading && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map(i => <BloomCardSkeleton key={i} />)}
+        </div>
+      )}
+
+      {!isLoading && !isError && blooms.length === 0 && (
+        <div className="bloom-in text-center py-20 px-8 rounded-3xl border border-border cursor-pointer group transition-all hover:border-primary/30"
+          onClick={() => setAddOpen(true)}>
+          <div className="text-6xl mb-4 float">🌸</div>
+          <h2 className="text-lg font-semibold text-foreground mb-2" style={{ fontFamily: 'Chillax, sans-serif' }}>
+            What's swirling in your head?
+          </h2>
+          <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
+            No categories. No due dates. No pressure.<br />
+            Just capture whatever is alive in your mind right now.
+          </p>
+          <div className="mt-6 inline-flex items-center gap-2 text-primary text-sm font-medium">
+            <Sparkles size={14} /> Tap anywhere to bloom
+          </div>
+        </div>
+      )}
+
+      {!isLoading && !isError && blooms.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {blooms.map(bloom => (
+            <BloomCard key={bloom.id} bloom={bloom} onDelete={() => del.mutate(bloom.id)} />
+          ))}
+          <button data-testid="btn-add-bloom-card" onClick={() => setAddOpen(true)}
+            className="bloom-card border-2 border-dashed border-border rounded-2xl p-5 flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all min-h-[140px] group">
+            <Plus size={18} className="group-hover:scale-110 transition-transform" />
+            <span className="text-sm font-medium">New bloom</span>
+          </button>
+        </div>
+      )}
+
+      <AddBloomDialog open={addOpen} onClose={() => setAddOpen(false)} />
+    </div>
+  );
+}
